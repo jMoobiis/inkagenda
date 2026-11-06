@@ -41,7 +41,7 @@ public class AgendaService {
     @Transactional(readOnly = true)
     public List<LocalDateTime> horariosDisponiveis(LocalDate dia, int duracaoHoras) {
         if (duracaoHoras <= 0) {
-            throw new RegraNegocioException("A duracao da sessao deve ser maior que zero");
+            throw new RegraNegocioException("A duração da sessão deve ser maior que zero");
         }
         ConfiguracaoTatuador config = configuracao();
         List<LocalDateTime> livres = new ArrayList<>();
@@ -66,7 +66,7 @@ public class AgendaService {
     public Sessao criarPreReserva(Solicitacao solicitacao, LocalDateTime inicio) {
         Integer horas = solicitacao.getDuracaoEstimadaHoras();
         if (horas == null || horas <= 0) {
-            throw new RegraNegocioException("A solicitacao nao tem duracao estimada");
+            throw new RegraNegocioException("A solicitação não tem duração estimada");
         }
         ConfiguracaoTatuador config = configuracao();
         LocalDateTime fim = inicio.plusHours(horas);
@@ -112,7 +112,7 @@ public class AgendaService {
 
     private void exigirSessaoAtiva(Sessao sessao) {
         if (!sessao.getStatus().ocupaAgenda()) {
-            throw new RegraNegocioException("A sessao nao esta ativa na agenda");
+            throw new RegraNegocioException("A sessão não está ativa na agenda");
         }
     }
 
@@ -122,7 +122,7 @@ public class AgendaService {
                 .isBefore(agora().plusHours(config.getAntecedenciaMinimaHoras()));
         if (semAntecedencia && !confirmacao) {
             throw new RegraNegocioException("Faltam menos de " + config.getAntecedenciaMinimaHoras()
-                    + "h para a sessao: o sinal sera perdido. Confirme explicitamente para seguir");
+                    + "h para a sessão: o sinal será perdido. Confirme explicitamente para seguir");
         }
         return semAntecedencia;
     }
@@ -130,19 +130,19 @@ public class AgendaService {
     private void validarHorario(LocalDateTime inicio, LocalDateTime fim,
             ConfiguracaoTatuador config, Sessao ignorada) {
         if (!config.getDiasAtendimento().contains(inicio.getDayOfWeek())) {
-            throw new RegraNegocioException("Nao ha atendimento neste dia da semana");
+            throw new RegraNegocioException("Não há atendimento neste dia da semana");
         }
         LocalDate dia = inicio.toLocalDate();
         IntervaloHorario expediente = new IntervaloHorario(dia.atTime(config.getAberturaExpediente()),
                 dia.atTime(config.getFimExpediente()));
         if (!new IntervaloHorario(inicio, fim).cabeEm(expediente)) {
-            throw new RegraNegocioException("A sessao precisa caber dentro do expediente");
+            throw new RegraNegocioException("A sessão precisa caber dentro do expediente");
         }
         if (!inicio.isAfter(agora())) {
-            throw new RegraNegocioException("O horario escolhido ja passou");
+            throw new RegraNegocioException("O horário escolhido já passou");
         }
         if (!semConflito(inicio, fim, config, ignorada)) {
-            throw new RegraNegocioException("Horario indisponivel: conflita com outra sessao ou bloqueio");
+            throw new RegraNegocioException("Horário indisponível: conflita com outra sessão ou bloqueio");
         }
     }
 
