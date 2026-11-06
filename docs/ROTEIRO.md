@@ -64,9 +64,8 @@ Na mesma branch:
 
 1. Login, painel por status com "Sem retorno", resposta de orçamento e WhatsApp, agenda semanal/diária com bloqueios, controle de sinal, confirmações de véspera e gerenciador de vitrine. Commit:
    `feat(ui): constroi interface publica Steezy/Mailchimp, area do cliente e painel administrativo completo`
-2. `.github/workflows/ci.yml` (Java 21, `./mvnw -B clean verify`, publica o relatório JaCoCo como artefato) e `README.md` (execução, como definir as credenciais em `application-local.yml` sem citar valores, onde colocar a foto local, arquitetura, cobertura e Matriz de Rastreabilidade RF/US/RN/teste com os nomes reais dos testes). Commit:
-   `ci(devops): configura pipeline GitHub Actions com build, testes JUnit e relatorio JaCoCo`
-3. Faça push e confirme que o workflow passou, se tiver acesso.
+2. `README.md` (execução, como definir as credenciais em `application-local.yml` sem citar valores, onde colocar a foto local, arquitetura, cobertura e Matriz de Rastreabilidade RF/US/RN/teste com os nomes reais dos testes). Commit: `docs(readme): documenta execucao, arquitetura e matriz de rastreabilidade`
+3. Faça push. O pipeline já existe em `.github/workflows/`: a nuvem não pode alterar esses arquivos. Se precisar mudá-los, anote em "Registro" para o dono do projeto.
 
 ## E6. Verificação final e release
 
@@ -77,10 +76,11 @@ Na mesma branch:
 ```
 git checkout develop && git merge --no-ff feature/ui-vitrine-admin -m "merge: integra interface completa, vitrine e pipeline CI"
 git checkout main && git merge --no-ff develop -m "release: promove v1.0.0-mvp do sistema InkAgenda"
-git tag -a v1.0.0-mvp -m "Release v1.0.0-mvp - InkAgenda MVP Validado"
-git push origin develop main v1.0.0-mvp
+git push origin develop main
 ```
+
+A nuvem não pode criar tags. O workflow `release-tag.yml` cria a `v1.0.0-mvp` quando o commit `release:` chega na `main`. Registre em "Registro" se a tag ainda não tiver aparecido ao fim da execução.
 
 ## Registro
 
-- 05/11/2026: E0 concluída. Ciclo 1 com RED real (47 testes falhando) e GREEN/REFACTOR com 48 testes passando.
+- 05/11/2026: E0 concluída. Ciclo 1 com RED real (47 testes falhando) e GREEN/REFACTOR com 48 testes passando. Pipeline de CI criado antes do previsto, para validar todas as etapas seguintes, porque o ambiente da nuvem não tem permissão para enviar workflows.
