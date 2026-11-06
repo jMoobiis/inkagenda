@@ -9,7 +9,7 @@ Mensagens de commit entre crases são exigidas pelo edital: use o texto exato. O
 - [x] E0. Estrutura, domínio e Ciclo TDD 1 (`feature/orcamento`)
 - [x] E1. Ciclo TDD 2 (`feature/agenda`)
 - [x] E2. Ciclo TDD 3 (`feature/sinal-anamnese`)
-- [ ] E3. Vitrine e back-end web (`feature/ui-vitrine-admin`)
+- [x] E3. Vitrine e back-end web (`feature/ui-vitrine-admin`)
 - [ ] E4. Interface pública (`feature/ui-vitrine-admin`)
 - [ ] E5. Painel admin, CI e README (`feature/ui-vitrine-admin`)
 - [ ] E6. Verificação final e release
@@ -86,3 +86,4 @@ A nuvem não pode criar tags. O workflow `release-tag.yml` cria a `v1.0.0-mvp` q
 - 05/11/2026: E0 concluída. Ciclo 1 com RED real (47 testes falhando) e GREEN/REFACTOR com 48 testes passando. Pipeline de CI criado antes do previsto, para validar todas as etapas seguintes, porque o ambiente da nuvem não tem permissão para enviar workflows.
 - 06/11/2026: E1 concluída. Ciclo 2 com RED real (falha de compilação, `AgendaService` inexistente), GREEN com 34 testes de agenda passando e REFACTOR com `IntervaloHorario`. `./mvnw` não pôde baixar o Maven no ambiente (wget sem proxy); o build foi rodado com `mvn -B clean verify` (Maven 3.9.11): 82 testes, 0 falhas. O corpo do commit RED cita 33 testes, o total real é 34. Sem pendências.
 - 06/11/2026: E2 concluída, feita pelo PC local a pedido do dono, fora da rotina. Ciclo 3 com RED real (falha de compilação, `SinalService` e `AnamneseService` inexistentes), GREEN com 55 testes novos passando e REFACTOR com exceções derivadas de `RegraNegocioException` e `TokenAcesso`. `./mvnw -B clean verify`: 137 testes, 0 falhas. Sem pendências.
+- 06/11/2026: E3 concluída, feita pelo PC local a pedido do dono, fora da rotina. `VitrineService`, segurança, controllers, erros 403/404, job de expiração, seed e imagens privadas na branch `feature/ui-vitrine-admin`, que só entra na `develop` na E6. `./mvnw -B clean verify`: 232 testes, 0 falhas, 94% de cobertura de instruções. Aplicação conferida com HTTP real: CSRF em multipart, login, imagens privadas e o fluxo do orçamento à anamnese. **Para a E4 e a E5:** os templates em `templates/` são mínimos e sem estilo, de propósito; refaça o visual mantendo as rotas, os nomes dos campos e os `th:action` (CSRF), e rode os testes de `web/`, que verificam textos dessas telas. Decisão registrada: cancelar com o sinal mantido devolve a solicitação para `ORCADA`; com o sinal perdido, para `PERDIDA`. Pendência: não há tela para editar o perfil (endereço e chave Pix), que hoje vem só do seed, então no profile `postgres` esses dados ficam vazios.
