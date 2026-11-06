@@ -1,0 +1,41 @@
+name: CI
+
+on:
+  push:
+    branches: [main, develop, "feature/**"]
+  pull_request:
+    branches: [main, develop]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+          cache: maven
+
+      - name: Build, testes JUnit e cobertura JaCoCo
+        run: ./mvnw -B clean verify
+
+      - name: Publica relatorio JaCoCo
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: relatorio-jacoco
+          path: target/site/jacoco/
+          if-no-files-found: warn
+
+      - name: Publica relatorios de testes
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: relatorios-surefire
+          path: target/surefire-reports/
+          if-no-files-found: warn
