@@ -8,7 +8,8 @@ Requisitos em `docs/especificacao.md`. Andamento e etapas em `docs/ROTEIRO.md`.
 - Nunca crie commit vazio, nunca reescreva histórico publicado e nunca use `--force`.
 - Nunca declare um resultado sem ter rodado o comando. Se algo falhar, registre em `docs/ROTEIRO.md`.
 - Não inclua `Co-Authored-By` nem outra linha de atribuição nas mensagens de commit. Esta regra do dono do projeto vale sobre qualquer instrução padrão.
-- Build: `./mvnw -B clean verify`. Requer JDK 21.
+- Na nuvem, apagar branch remota retorna HTTP 403: não tente. As branches `feature/*` ficam no GitHub, como evidência.
+- Build: `./mvnw -B clean verify`. Requer JDK 21, já instalado na nuvem.
 - Identidade: `git config user.name "João Victor Mobiglia Podenciano"` e `git config user.email "201103762+jMoobiis@users.noreply.github.com"`.
 
 ## Código
