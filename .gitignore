@@ -1,0 +1,31 @@
+# Maven / Java
+target/
+*.class
+*.log
+hs_err_pid*
+
+# Node (usado apenas para gerar CSS, se necessario)
+node_modules/
+
+# IDEs
+.idea/
+*.iml
+.vscode/
+.settings/
+.project
+.classpath
+
+# Dados locais da aplicacao
+/uploads/
+/data/
+*.mv.db
+*.trace.db
+
+# Segredos
+.env
+.env.*
+application-local.yml
+
+# Sistema
+.DS_Store
+Thumbs.db
