@@ -3,6 +3,7 @@ package br.com.inkagenda.service;
 import br.com.inkagenda.domain.enums.StatusSessao;
 import br.com.inkagenda.domain.model.BloqueioAgenda;
 import br.com.inkagenda.domain.model.ConfiguracaoTatuador;
+import br.com.inkagenda.domain.model.IntervaloHorario;
 import br.com.inkagenda.domain.model.Sessao;
 import br.com.inkagenda.domain.model.Solicitacao;
 import br.com.inkagenda.domain.repository.BloqueioAgendaRepository;
@@ -132,8 +133,9 @@ public class AgendaService {
             throw new RegraNegocioException("Nao ha atendimento neste dia da semana");
         }
         LocalDate dia = inicio.toLocalDate();
-        if (inicio.isBefore(dia.atTime(config.getAberturaExpediente()))
-                || fim.isAfter(dia.atTime(config.getFimExpediente()))) {
+        IntervaloHorario expediente = new IntervaloHorario(dia.atTime(config.getAberturaExpediente()),
+                dia.atTime(config.getFimExpediente()));
+        if (!new IntervaloHorario(inicio, fim).cabeEm(expediente)) {
             throw new RegraNegocioException("A sessao precisa caber dentro do expediente");
         }
         if (!inicio.isAfter(agora())) {
@@ -150,6 +152,7 @@ public class AgendaService {
         LocalDateTime inicioDia = dia.atStartOfDay();
         LocalDateTime fimDia = dia.plusDays(1).atStartOfDay();
         Duration limpeza = Duration.ofMinutes(config.getIntervaloLimpezaMinutos());
+        IntervaloHorario pretendido = new IntervaloHorario(inicio, fim);
 
         for (Sessao existente : sessoes.findByStatusInAndInicioBeforeAndFimAfter(
                 EnumSet.of(StatusSessao.PRE_RESERVADA, StatusSessao.CONFIRMADA), fimDia,
@@ -158,14 +161,16 @@ public class AgendaService {
                     && ignorada.getId().equals(existente.getId())) {
                 continue;
             }
-            if (inicio.isBefore(existente.getFim().plus(limpeza))
-                    && existente.getInicio().isBefore(fim.plus(limpeza))) {
+            IntervaloHorario ocupado = new IntervaloHorario(existente.getInicio(),
+                    existente.getFim()).comFolgaApos(limpeza);
+            if (pretendido.comFolgaApos(limpeza).sobrepoe(ocupado)) {
                 return false;
             }
         }
         for (BloqueioAgenda bloqueio : bloqueios.findByInicioBeforeAndFimAfter(fimDia,
                 inicioDia)) {
-            if (inicio.isBefore(bloqueio.getFim()) && bloqueio.getInicio().isBefore(fim)) {
+            if (pretendido.sobrepoe(new IntervaloHorario(bloqueio.getInicio(),
+                    bloqueio.getFim()))) {
                 return false;
             }
         }
