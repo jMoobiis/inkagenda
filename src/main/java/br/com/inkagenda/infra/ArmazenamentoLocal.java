@@ -2,6 +2,7 @@ package br.com.inkagenda.infra;
 
 import br.com.inkagenda.service.ArmazenamentoArquivos;
 import br.com.inkagenda.service.ArquivoEnviado;
+import br.com.inkagenda.service.RecursoNaoEncontradoException;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.Files;
@@ -18,7 +19,7 @@ public class ArmazenamentoLocal implements ArmazenamentoArquivos {
     private final Path diretorio;
 
     public ArmazenamentoLocal(@Value("${inkagenda.uploads-dir}") String diretorio) {
-        this.diretorio = Path.of(diretorio);
+        this.diretorio = Path.of(diretorio).toAbsolutePath().normalize();
     }
 
     @Override
@@ -33,5 +34,18 @@ public class ArmazenamentoLocal implements ArmazenamentoArquivos {
             throw new UncheckedIOException("Falha ao salvar o arquivo enviado", e);
         }
         return nome;
+    }
+
+    @Override
+    public byte[] carregar(String caminho) {
+        Path arquivo = diretorio.resolve(caminho).normalize();
+        if (!arquivo.startsWith(diretorio) || !Files.isRegularFile(arquivo)) {
+            throw new RecursoNaoEncontradoException("Arquivo não encontrado");
+        }
+        try {
+            return Files.readAllBytes(arquivo);
+        } catch (IOException e) {
+            throw new UncheckedIOException("Falha ao ler o arquivo", e);
+        }
     }
 }

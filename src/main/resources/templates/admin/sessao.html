@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Sessão | InkAgenda</title></head>
+<body>
+<nav th:replace="~{admin/_menu :: menu}"></nav>
+<main>
+  <h1>Sessão</h1>
+  <p th:text="${sessao.solicitacao.cliente.nome}">Cliente</p>
+  <p>Status: <span th:text="${sessao.status}">Status</span></p>
+  <p><span th:text="${#temporals.format(sessao.inicio, 'dd/MM/yyyy HH:mm')}">Início</span> até <span th:text="${#temporals.format(sessao.fim, 'HH:mm')}">Fim</span></p>
+  <p>Sinal combinado: <span th:text="${sessao.solicitacao.valorSinal}">0</span></p>
+  <p th:if="${sessao.valorRecebido}">Recebido: <span th:text="${sessao.valorRecebido}">0</span>. A abater: <span th:text="${sessao.valorAAbater}">0</span></p>
+  <p th:if="${sessao.comprovante}"><a th:href="@{/admin/sessoes/{id}/comprovante(id=${sessao.id})}">Ver comprovante</a></p>
+  <form th:if="${sessao.status.name() == 'PRE_RESERVADA'}" th:action="@{/admin/sessoes/{id}/sinal(id=${sessao.id})}" method="post" enctype="multipart/form-data">
+    <h2>Registrar sinal</h2>
+    <label>Data do pagamento <input type="date" name="dataPagamento" required></label>
+    <label>Valor recebido <input type="number" step="0.01" min="0.01" name="valorRecebido" required></label>
+    <label>Comprovante (opcional) <input type="file" name="comprovante" accept="image/jpeg,image/png"></label>
+    <label><input type="checkbox" name="confirmacaoDivergencia" value="true"> Confirmo o valor mesmo se divergir do combinado</label>
+    <button type="submit">Registrar sinal</button>
+  </form>
+  <th:block th:if="${sessao.status.ocupaAgenda()}">
+    <form th:action="@{/admin/sessoes/{id}/remarcar(id=${sessao.id})}" method="post">
+      <h2>Remarcar</h2>
+      <label>Novo início <input type="datetime-local" name="novoInicio" required></label>
+      <label><input type="checkbox" name="confirmacaoExplicitaPerdaSinal" value="true"> Ciente da perda do sinal, se houver</label>
+      <button type="submit">Remarcar</button>
+    </form>
+    <form th:action="@{/admin/sessoes/{id}/cancelar(id=${sessao.id})}" method="post">
+      <h2>Cancelar</h2>
+      <label><input type="checkbox" name="confirmacaoExplicitaPerdaSinal" value="true"> Ciente da perda do sinal, se houver</label>
+      <button type="submit">Cancelar sessão</button>
+    </form>
+  </th:block>
+  <p th:if="${linkFicha}">Link da ficha: <span th:text="${linkFicha}">link</span></p>
+  <p th:if="${ficha}"><a th:href="@{/admin/sessoes/{id}/anamnese(id=${sessao.id})}">Ver anamnese</a></p>
+</main>
+</body>
+</html>

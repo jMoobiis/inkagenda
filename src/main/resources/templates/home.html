@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>InkAgenda</title></head>
+<body th:attr="data-modo=${modo}">
+<header>
+  <strong>INKAGENDA // GUSTA</strong>
+  <nav><a href="#portfolio">Portfólio</a> <a th:href="@{/orcamento}">Orçamento</a> <a th:href="@{/login}">Log In (Admin)</a></nav>
+</header>
+<main>
+  <section>
+    <h1>TRANSFORME SUA IDEIA EM ARTE NA PELE</h1>
+    <img th:each="foto : ${hero}" th:src="@{/portfolio/{id}/imagem(id=${foto.id})}" th:alt="${foto.titulo}" width="160">
+  </section>
+  <section id="portfolio">
+    <h2>Portfólio</h2>
+    <nav>
+      <a th:href="@{/}">Todos</a>
+      <a th:each="estilo : ${estilos}" th:href="@{/(estilo=${estilo})}" th:text="${estilo.rotulo}">Estilo</a>
+    </nav>
+    <figure th:each="foto : ${fotos}">
+      <img th:src="@{/portfolio/{id}/imagem(id=${foto.id})}" th:alt="${foto.titulo}" width="240">
+      <figcaption><span th:text="${foto.titulo}">Título</span> <em th:text="${foto.tagDestaque}">Tag</em></figcaption>
+    </figure>
+  </section>
+</main>
+</body>
+</html>

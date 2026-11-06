@@ -16,6 +16,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -46,12 +47,31 @@ public class SinalService {
         this.relogio = relogio;
     }
 
+    /** Solicitacao dona do link de agendamento. */
+    @Transactional(readOnly = true)
+    public Solicitacao solicitacaoPorToken(String token) {
+        return solicitacoes.findByTokenAgendamento(
+                TokenAcesso.exigirInformado(token, TOKEN_INVALIDO))
+                .orElseThrow(() -> new TokenInvalidoException(TOKEN_INVALIDO));
+    }
+
+    /** Pre-reserva aguardando sinal da solicitacao, para a tela de Pix. */
+    @Transactional(readOnly = true)
+    public Optional<Sessao> preReservaDe(Solicitacao solicitacao) {
+        return sessoes.findFirstBySolicitacaoIdAndStatusInOrderByIdDesc(solicitacao.getId(),
+                List.of(StatusSessao.PRE_RESERVADA));
+    }
+
+    /** Dados do tatuador usados nas telas de pagamento. */
+    @Transactional(readOnly = true)
+    public ConfiguracaoTatuador configuracao() {
+        return configuracoes.findFirstByOrderByIdAsc().orElseGet(ConfiguracaoTatuador::new);
+    }
+
     /** O cliente escolhe o horario pelo link e a solicitacao passa a aguardar o sinal (US05). */
     @Transactional
     public Sessao escolherHorario(String token, LocalDateTime inicio) {
-        Solicitacao solicitacao = solicitacoes.findByTokenAgendamento(
-                TokenAcesso.exigirInformado(token, TOKEN_INVALIDO))
-                .orElseThrow(() -> new TokenInvalidoException(TOKEN_INVALIDO));
+        Solicitacao solicitacao = solicitacaoPorToken(token);
         if (solicitacao.getStatus() != StatusSolicitacao.ORCADA) {
             throw new RegraNegocioException("Este orçamento não está disponível para agendamento");
         }
@@ -166,8 +186,7 @@ public class SinalService {
     }
 
     private String mensagemVespera(Sessao sessao) {
-        ConfiguracaoTatuador config = configuracoes.findFirstByOrderByIdAsc()
-                .orElseGet(ConfiguracaoTatuador::new);
+        ConfiguracaoTatuador config = configuracao();
         String primeiroNome = sessao.getSolicitacao().getCliente().getNome().split(" ")[0];
         return "Olá, " + primeiroNome + "! Aqui é o Gusta. Lembrete da sua sessão:\n"
                 + "Data: " + sessao.getInicio().format(DATA) + "\n"

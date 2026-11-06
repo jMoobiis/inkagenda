@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Orçamento | InkAgenda</title></head>
+<body>
+<main>
+  <h1>Solicitar orçamento</h1>
+  <p th:if="${erro}" th:text="${erro}" role="alert">Erro</p>
+  <form th:action="@{/orcamento}" th:object="${form}" method="post" enctype="multipart/form-data">
+    <p th:each="e : ${#fields.allErrors()}" th:text="${e}" role="alert">Erro</p>
+    <label>Nome <input th:field="*{nome}" required></label>
+    <label>WhatsApp com DDD <input th:field="*{whatsapp}" type="tel" required></label>
+    <label>Tamanho em cm <input th:field="*{tamanhoCm}" type="number" min="1" max="300" required></label>
+    <label>Região do corpo <input th:field="*{regiaoCorpo}" required></label>
+    <label>Estilo
+      <select th:field="*{estilo}" required>
+        <option th:each="e : ${estilosDisponiveis}" th:value="${e}" th:text="${e.rotulo}">Estilo</option>
+      </select>
+    </label>
+    <label><input type="checkbox" th:field="*{cobertura}"> É cobertura?</label>
+    <label>Foto da tatuagem atual (se for cobertura) <input type="file" name="fotoAtual" accept="image/jpeg,image/png"></label>
+    <label>Descrição <textarea th:field="*{descricao}" maxlength="2000"></textarea></label>
+    <label>Preferência de dias <input th:field="*{preferenciaDias}"></label>
+    <label>Imagens de referência (1 a 5, JPG ou PNG, até 5MB cada) <input type="file" name="imagens" accept="image/jpeg,image/png" multiple></label>
+    <label><input type="checkbox" th:field="*{aceitePrivacidade}"> Li e aceito o Aviso de Privacidade</label>
+    <button type="submit">Enviar pedido</button>
+  </form>
+</main>
+</body>
+</html>

@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Painel | InkAgenda</title></head>
+<body>
+<nav th:replace="~{admin/_menu :: menu}"></nav>
+<main>
+  <h1>Painel</h1>
+  <section th:each="coluna : ${porStatus}">
+    <h2 th:text="${coluna.key}">Status</h2>
+    <ul>
+      <li th:each="item : ${coluna.value}">
+        <a th:href="@{/admin/solicitacoes/{id}(id=${item.solicitacao.id})}" th:text="${item.solicitacao.cliente.nome}">Cliente</a>
+        <strong th:if="${item.semRetorno}" class="badge-sem-retorno">Sem retorno</strong>
+      </li>
+    </ul>
+  </section>
+</main>
+</body>
+</html>

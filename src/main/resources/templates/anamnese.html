@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Anamnese | InkAgenda</title></head>
+<body>
+<main>
+  <h1>Ficha de anamnese</h1>
+  <p th:if="${erro}" th:text="${erro}" role="alert">Erro</p>
+  <form th:action="@{/anamnese/{t}(t=${token})}" th:object="${form}" method="post">
+    <p th:each="e : ${#fields.allErrors()}" th:text="${e}" role="alert">Erro</p>
+    <label>Alergias <input th:field="*{alergias}"></label>
+    <label>Medicamentos em uso <input th:field="*{medicamentos}"></label>
+    <label>Problemas de cicatrização <input th:field="*{problemasCicatrizacao}"></label>
+    <label><input type="checkbox" th:field="*{diabetes}"> Tenho diabetes</label>
+    <label><input type="checkbox" th:field="*{gestacao}"> Estou gestante</label>
+    <label>Observações <textarea th:field="*{observacoes}" maxlength="2000"></textarea></label>
+    <fieldset>
+      <legend>Consentimento para dados de saúde (LGPD, art. 11, I)</legend>
+      <label><input type="checkbox" th:field="*{consentimentoDadosSaude}"> Consinto, de forma específica e destacada, com o uso destes dados de saúde pelo tatuador para avaliar e realizar a sessão.</label>
+    </fieldset>
+    <button type="submit">Enviar ficha</button>
+  </form>
+</main>
+</body>
+</html>

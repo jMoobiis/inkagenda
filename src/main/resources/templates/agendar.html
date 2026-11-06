@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Agendar | InkAgenda</title></head>
+<body>
+<main>
+  <h1>Escolha seu horário</h1>
+  <p th:if="${erro}" th:text="${erro}" role="alert">Erro</p>
+  <p>Valor total: <span th:text="${solicitacao.valorTotal}">0</span> | Sinal: <span th:text="${solicitacao.valorSinal}">0</span> | Duração: <span th:text="${solicitacao.duracaoEstimadaHoras}">0</span>h</p>
+  <form th:action="@{/agendar/{t}(t=${token})}" method="get">
+    <label>Dia <input type="date" name="dia" th:value="${dia}" th:min="${diaMinimo}"></label>
+    <button type="submit">Ver horários</button>
+  </form>
+  <p th:if="${#lists.isEmpty(horarios)}">Sem horários livres neste dia.</p>
+  <form th:each="horario : ${horarios}" th:action="@{/agendar/{t}(t=${token})}" method="post">
+    <input type="hidden" name="inicio" th:value="${horario}">
+    <button type="submit" th:text="${#temporals.format(horario, 'dd/MM HH:mm')}">Horário</button>
+  </form>
+</main>
+</body>
+</html>

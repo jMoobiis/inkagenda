@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<body>
+<nav th:fragment="menu">
+  <a th:href="@{/admin}">Painel</a>
+  <a th:href="@{/admin/agenda}">Agenda</a>
+  <a th:href="@{/admin/vespera}">Véspera</a>
+  <a th:href="@{/admin/vitrine}">Gerenciar Portfólio &amp; Vitrine</a>
+  <form th:action="@{/logout}" method="post"><button type="submit">Sair</button></form>
+  <p th:if="${mensagem}" th:text="${mensagem}" role="status">Mensagem</p>
+  <p th:if="${erro}" th:text="${erro}" role="alert">Erro</p>
+</nav>
+</body>
+</html>
