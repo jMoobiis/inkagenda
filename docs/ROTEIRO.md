@@ -8,7 +8,7 @@ Mensagens de commit entre crases são exigidas pelo edital: use o texto exato. O
 
 - [x] E0. Estrutura, domínio e Ciclo TDD 1 (`feature/orcamento`)
 - [x] E1. Ciclo TDD 2 (`feature/agenda`)
-- [ ] E2. Ciclo TDD 3 (`feature/sinal-anamnese`)
+- [x] E2. Ciclo TDD 3 (`feature/sinal-anamnese`)
 - [ ] E3. Vitrine e back-end web (`feature/ui-vitrine-admin`)
 - [ ] E4. Interface pública (`feature/ui-vitrine-admin`)
 - [ ] E5. Painel admin, CI e README (`feature/ui-vitrine-admin`)
@@ -85,3 +85,4 @@ A nuvem não pode criar tags. O workflow `release-tag.yml` cria a `v1.0.0-mvp` q
 
 - 05/11/2026: E0 concluída. Ciclo 1 com RED real (47 testes falhando) e GREEN/REFACTOR com 48 testes passando. Pipeline de CI criado antes do previsto, para validar todas as etapas seguintes, porque o ambiente da nuvem não tem permissão para enviar workflows.
 - 06/11/2026: E1 concluída. Ciclo 2 com RED real (falha de compilação, `AgendaService` inexistente), GREEN com 34 testes de agenda passando e REFACTOR com `IntervaloHorario`. `./mvnw` não pôde baixar o Maven no ambiente (wget sem proxy); o build foi rodado com `mvn -B clean verify` (Maven 3.9.11): 82 testes, 0 falhas. O corpo do commit RED cita 33 testes, o total real é 34. Sem pendências.
+- 06/11/2026: E2 concluída, feita pelo PC local a pedido do dono, fora da rotina. Ciclo 3 com RED real (falha de compilação, `SinalService` e `AnamneseService` inexistentes), GREEN com 55 testes novos passando e REFACTOR com exceções derivadas de `RegraNegocioException` e `TokenAcesso`. `./mvnw -B clean verify`: 137 testes, 0 falhas. Sem pendências.
