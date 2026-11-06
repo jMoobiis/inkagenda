@@ -22,7 +22,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class SinalService {
 
-    private static final DateTimeFormatter DATA = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+    private static final String TOKEN_INVALIDO = "Link de agendamento inválido";
+    private static final DateTimeFormatter DATA =DateTimeFormatter.ofPattern("dd/MM/yyyy");
     private static final DateTimeFormatter HORA = DateTimeFormatter.ofPattern("HH:mm");
     private static final String CUIDADOS = "Cuidados antes da sessão: durma bem, alimente-se, "
             + "hidrate a pele e evite bebida alcoólica nas 24h anteriores.";
@@ -48,11 +49,9 @@ public class SinalService {
     /** O cliente escolhe o horario pelo link e a solicitacao passa a aguardar o sinal (US05). */
     @Transactional
     public Sessao escolherHorario(String token, LocalDateTime inicio) {
-        if (token == null || token.isBlank()) {
-            throw new RegraNegocioException("Link de agendamento inválido");
-        }
-        Solicitacao solicitacao = solicitacoes.findByTokenAgendamento(token)
-                .orElseThrow(() -> new RegraNegocioException("Link de agendamento inválido"));
+        Solicitacao solicitacao = solicitacoes.findByTokenAgendamento(
+                TokenAcesso.exigirInformado(token, TOKEN_INVALIDO))
+                .orElseThrow(() -> new TokenInvalidoException(TOKEN_INVALIDO));
         if (solicitacao.getStatus() != StatusSolicitacao.ORCADA) {
             throw new RegraNegocioException("Este orçamento não está disponível para agendamento");
         }
@@ -65,8 +64,7 @@ public class SinalService {
     /** Registra o Pix conferido; so entao a sessao vira confirmada (RN04). */
     @Transactional
     public ResultadoSinal registrarSinal(Long sessaoId, RegistroSinal registro) {
-        Sessao sessao = sessoes.findById(sessaoId)
-                .orElseThrow(() -> new RegraNegocioException("Sessão não encontrada"));
+        Sessao sessao = buscarSessao(sessaoId);
         if (sessao.getStatus() != StatusSessao.PRE_RESERVADA) {
             throw new RegraNegocioException("Esta sessão não aguarda sinal");
         }
@@ -121,9 +119,7 @@ public class SinalService {
     /** Monta o lembrete; sem telefone valido, devolve o aviso em vez do link (US06, CA3). */
     @Transactional(readOnly = true)
     public LembreteVespera lembreteVespera(Sessao sessao) {
-        if (sessao.getStatus() != StatusSessao.CONFIRMADA) {
-            throw new RegraNegocioException("Esta sessão não está confirmada");
-        }
+        exigirConfirmada(sessao);
         NumeroWhatsapp numero;
         try {
             numero = NumeroWhatsapp.de(sessao.getSolicitacao().getCliente().getWhatsapp());
@@ -138,13 +134,21 @@ public class SinalService {
     /** Registra a presenca confirmada pelo cliente (US06). */
     @Transactional
     public void confirmarPresenca(Long sessaoId) {
-        Sessao sessao = sessoes.findById(sessaoId)
-                .orElseThrow(() -> new RegraNegocioException("Sessão não encontrada"));
+        Sessao sessao = buscarSessao(sessaoId);
+        exigirConfirmada(sessao);
+        sessao.setPresencaConfirmada(true);
+        sessoes.save(sessao);
+    }
+
+    private Sessao buscarSessao(Long sessaoId) {
+        return sessoes.findById(sessaoId)
+                .orElseThrow(() -> new RecursoNaoEncontradoException("Sessão não encontrada"));
+    }
+
+    private void exigirConfirmada(Sessao sessao) {
         if (sessao.getStatus() != StatusSessao.CONFIRMADA) {
             throw new RegraNegocioException("Esta sessão não está confirmada");
         }
-        sessao.setPresencaConfirmada(true);
-        sessoes.save(sessao);
     }
 
     private void validarRegistro(RegistroSinal registro, Solicitacao solicitacao) {

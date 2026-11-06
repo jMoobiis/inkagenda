@@ -9,12 +9,13 @@ import br.com.inkagenda.domain.repository.FichaAnamneseRepository;
 import java.time.Clock;
 import java.time.LocalDateTime;
 import java.util.Optional;
-import java.util.UUID;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class AnamneseService {
+
+    private static final String TOKEN_INVALIDO = "Link da ficha inválido";
 
     private final FichaAnamneseRepository fichas;
     private final ConfiguracaoTatuadorRepository configuracoes;
@@ -41,7 +42,7 @@ public class AnamneseService {
                 .orElseGet(ConfiguracaoTatuador::new);
         FichaAnamnese ficha = new FichaAnamnese();
         ficha.setSessao(sessao);
-        ficha.setToken(UUID.randomUUID().toString().replace("-", ""));
+        ficha.setToken(TokenAcesso.gerar());
         ficha.setExpiraEm(agora().plusHours(config.getValidadeAnamneseHoras()));
         return fichas.save(ficha);
     }
@@ -49,16 +50,13 @@ public class AnamneseService {
     /** Abre a ficha pendente. Ficha ja enviada nao reabre: o link nao expoe dados de saude. */
     @Transactional(readOnly = true)
     public FichaAnamnese abrirPorToken(String token) {
-        if (token == null || token.isBlank()) {
-            throw new RegraNegocioException("Link da ficha inválido");
-        }
-        FichaAnamnese ficha = fichas.findByToken(token)
-                .orElseThrow(() -> new RegraNegocioException("Link da ficha inválido"));
+        FichaAnamnese ficha = fichas.findByToken(TokenAcesso.exigirInformado(token, TOKEN_INVALIDO))
+                .orElseThrow(() -> new TokenInvalidoException(TOKEN_INVALIDO));
         if (ficha.getPreenchidaEm() != null) {
-            throw new RegraNegocioException("Esta ficha já foi enviada");
+            throw new TokenExpiradoException("Esta ficha já foi enviada");
         }
         if (ficha.getExpiraEm().isBefore(agora())) {
-            throw new RegraNegocioException("Link da ficha expirado");
+            throw new TokenExpiradoException("Link da ficha expirado");
         }
         return ficha;
     }

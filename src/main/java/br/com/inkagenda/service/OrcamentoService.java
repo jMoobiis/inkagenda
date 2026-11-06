@@ -13,7 +13,6 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.Clock;
 import java.time.LocalDateTime;
-import java.util.UUID;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -62,7 +61,7 @@ public class OrcamentoService {
     @Transactional
     public Solicitacao responderOrcamento(Long solicitacaoId, RespostaOrcamento resposta) {
         Solicitacao solicitacao = solicitacoes.findById(solicitacaoId)
-                .orElseThrow(() -> new RegraNegocioException("Solicitação não encontrada"));
+                .orElseThrow(() -> new RecursoNaoEncontradoException("Solicitação não encontrada"));
         validarStatusParaResposta(solicitacao.getStatus());
         validarValores(resposta);
 
@@ -72,7 +71,7 @@ public class OrcamentoService {
         solicitacao.setStatus(StatusSolicitacao.ORCADA);
         solicitacao.setOrcadaEm(LocalDateTime.now(relogio));
         if (solicitacao.getTokenAgendamento() == null) {
-            solicitacao.setTokenAgendamento(UUID.randomUUID().toString().replace("-", ""));
+            solicitacao.setTokenAgendamento(TokenAcesso.gerar());
         }
         return solicitacoes.save(solicitacao);
     }
