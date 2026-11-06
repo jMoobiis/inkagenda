@@ -21,6 +21,7 @@ import br.com.inkagenda.domain.repository.FichaAnamneseRepository;
 import br.com.inkagenda.domain.repository.SessaoRepository;
 import br.com.inkagenda.domain.repository.SolicitacaoRepository;
 import br.com.inkagenda.infra.ExpiracaoPreReservaJob;
+import java.time.Clock;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -41,6 +42,8 @@ class FluxoCompletoIntegrationTest {
 
     @Autowired
     private MockMvc mvc;
+    @Autowired
+    private Clock relogio;
     @Autowired
     private SolicitacaoRepository solicitacoes;
     @Autowired
@@ -81,8 +84,8 @@ class FluxoCompletoIntegrationTest {
     }
 
     /** Dia de atendimento distante, para nao colidir com o seed nem com a antecedencia. */
-    private static LocalDateTime horario(int semanas, int hora) {
-        LocalDate dia = LocalDate.now().plusWeeks(semanas);
+    private LocalDateTime horario(int semanas, int hora) {
+        LocalDate dia = LocalDate.now(relogio).plusWeeks(semanas);
         while (dia.getDayOfWeek() != DayOfWeek.TUESDAY) {
             dia = dia.plusDays(1);
         }
@@ -120,7 +123,7 @@ class FluxoCompletoIntegrationTest {
         assertThat(sessao.getStatus()).isEqualTo(StatusSessao.PRE_RESERVADA);
         mvc.perform(multipart("/admin/sessoes/" + sessao.getId() + "/sinal")
                 .file(new MockMultipartFile("comprovante", "pix.png", "image/png", PNG))
-                .param("dataPagamento", LocalDate.now().toString())
+                .param("dataPagamento", LocalDate.now(relogio).toString())
                 .param("valorRecebido", "300.00")
                 .with(user("admin")).with(csrf()))
                 .andExpect(flash().attributeExists("mensagem"));
@@ -183,7 +186,7 @@ class FluxoCompletoIntegrationTest {
         mvc.perform(get("/agendar/" + orcada.getTokenAgendamento() + "/pix"))
                 .andExpect(status().isOk());
         Sessao sessao = sessaoDe(orcada);
-        sessao.setExpiraEm(LocalDateTime.now().minusMinutes(1));
+        sessao.setExpiraEm(LocalDateTime.now(relogio).minusMinutes(1));
         sessoes.save(sessao);
 
         job.executar();
@@ -206,7 +209,7 @@ class FluxoCompletoIntegrationTest {
         Sessao sessao = sessaoDe(orcada);
 
         mvc.perform(multipart("/admin/sessoes/" + sessao.getId() + "/sinal")
-                .param("dataPagamento", LocalDate.now().toString())
+                .param("dataPagamento", LocalDate.now(relogio).toString())
                 .param("valorRecebido", "250.00")
                 .with(user("admin")).with(csrf()))
                 .andExpect(flash().attributeExists("erro"));

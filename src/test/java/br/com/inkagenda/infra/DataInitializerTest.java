@@ -13,6 +13,7 @@ import br.com.inkagenda.domain.repository.ItemPortfolioRepository;
 import br.com.inkagenda.domain.repository.SessaoRepository;
 import br.com.inkagenda.domain.repository.SolicitacaoRepository;
 import br.com.inkagenda.domain.repository.UsuarioAdminRepository;
+import java.time.Clock;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -31,6 +32,8 @@ class DataInitializerTest {
 
     @Autowired
     private DataInitializer seed;
+    @Autowired
+    private Clock relogio;
     @Autowired
     private ConfiguracaoTatuadorRepository configuracoes;
     @Autowired
@@ -72,13 +75,13 @@ class DataInitializerTest {
         List<Solicitacao> orcadas = solicitacoes
                 .findByStatusOrderByCriadaEmDesc(StatusSolicitacao.ORCADA);
         assertThat(orcadas).hasSize(2);
-        assertThat(orcadas).anyMatch(s -> s.getOrcadaEm().isBefore(LocalDateTime.now().minusDays(4)));
-        assertThat(orcadas).anyMatch(s -> s.getOrcadaEm().isAfter(LocalDateTime.now().minusDays(1)));
+        assertThat(orcadas).anyMatch(s -> s.getOrcadaEm().isBefore(LocalDateTime.now(relogio).minusDays(4)));
+        assertThat(orcadas).anyMatch(s -> s.getOrcadaEm().isAfter(LocalDateTime.now(relogio).minusDays(1)));
     }
 
     @Test
     void deveCriarSessaoConfirmadaParaAmanhaComFichaQuandoBaseVazia() {
-        LocalDate amanha = LocalDate.now().plusDays(1);
+        LocalDate amanha = LocalDate.now(relogio).plusDays(1);
 
         List<Sessao> sessoesDeAmanha = sessoes.findByStatusAndInicioBetweenOrderByInicio(
                 StatusSessao.CONFIRMADA, amanha.atStartOfDay(), amanha.atTime(LocalTime.MAX));

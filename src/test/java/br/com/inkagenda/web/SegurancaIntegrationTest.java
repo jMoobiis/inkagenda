@@ -30,6 +30,7 @@ import br.com.inkagenda.domain.repository.SessaoRepository;
 import br.com.inkagenda.domain.repository.SolicitacaoRepository;
 import br.com.inkagenda.service.ArmazenamentoArquivos;
 import br.com.inkagenda.service.ArquivoEnviado;
+import java.time.Clock;
 import java.time.LocalDateTime;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicLong;
@@ -51,6 +52,8 @@ class SegurancaIntegrationTest {
     @Autowired
     private MockMvc mvc;
     @Autowired
+    private Clock relogio;
+    @Autowired
     private ClienteRepository clientes;
     @Autowired
     private SolicitacaoRepository solicitacoes;
@@ -68,7 +71,7 @@ class SegurancaIntegrationTest {
     }
 
     private Solicitacao solicitacaoComImagem() {
-        LocalDateTime agora = LocalDateTime.now();
+        LocalDateTime agora = LocalDateTime.now(relogio);
         Cliente cliente = clientes.save(new Cliente("Cliente de Teste",
                 String.valueOf(NUMERO.incrementAndGet()), agora));
         Solicitacao s = new Solicitacao();
@@ -82,8 +85,8 @@ class SegurancaIntegrationTest {
     private FichaAnamnese ficha(LocalDateTime expiraEm, LocalDateTime preenchidaEm) {
         Sessao sessao = new Sessao();
         sessao.setSolicitacao(solicitacaoComImagem());
-        sessao.setInicio(LocalDateTime.now().plusDays(5));
-        sessao.setFim(LocalDateTime.now().plusDays(5).plusHours(1));
+        sessao.setInicio(LocalDateTime.now(relogio).plusDays(5));
+        sessao.setFim(LocalDateTime.now(relogio).plusDays(5).plusHours(1));
         sessao.setStatus(StatusSessao.CONFIRMADA);
         FichaAnamnese ficha = new FichaAnamnese();
         ficha.setSessao(sessoes.save(sessao));
@@ -184,7 +187,7 @@ class SegurancaIntegrationTest {
 
     @Test
     void deveRecusarEnvioDeFichaQuandoSemCsrf() throws Exception {
-        FichaAnamnese ficha = ficha(LocalDateTime.now().plusDays(1), null);
+        FichaAnamnese ficha = ficha(LocalDateTime.now(relogio).plusDays(1), null);
 
         mvc.perform(post("/anamnese/" + ficha.getToken()).param("consentimentoDadosSaude", "true"))
                 .andExpect(status().isForbidden());
@@ -266,7 +269,7 @@ class SegurancaIntegrationTest {
 
     @Test
     void deveResponder403AmigavelQuandoLinkDaFichaExpirado() throws Exception {
-        FichaAnamnese ficha = ficha(LocalDateTime.now().minusDays(1), null);
+        FichaAnamnese ficha = ficha(LocalDateTime.now(relogio).minusDays(1), null);
 
         mvc.perform(get("/anamnese/" + ficha.getToken()))
                 .andExpect(status().isForbidden())
@@ -275,7 +278,7 @@ class SegurancaIntegrationTest {
 
     @Test
     void naoDeveMostrarRespostasQuandoLinkDeFichaJaEnviada() throws Exception {
-        FichaAnamnese ficha = ficha(LocalDateTime.now().plusDays(1), LocalDateTime.now());
+        FichaAnamnese ficha = ficha(LocalDateTime.now(relogio).plusDays(1), LocalDateTime.now(relogio));
 
         String corpo = mvc.perform(get("/anamnese/" + ficha.getToken()))
                 .andExpect(status().isForbidden())
@@ -286,7 +289,7 @@ class SegurancaIntegrationTest {
 
     @Test
     void naoDeveMostrarRespostasDeSaudeQuandoAnonimoAcessaAdmin() throws Exception {
-        FichaAnamnese ficha = ficha(LocalDateTime.now().plusDays(1), LocalDateTime.now());
+        FichaAnamnese ficha = ficha(LocalDateTime.now(relogio).plusDays(1), LocalDateTime.now(relogio));
 
         mvc.perform(get("/admin/sessoes/" + ficha.getSessao().getId() + "/anamnese"))
                 .andExpect(status().is3xxRedirection())
@@ -295,8 +298,8 @@ class SegurancaIntegrationTest {
 
     @Test
     void deveMostrarRespostasDeSaudeQuandoTatuadorAutenticado() throws Exception {
-        FichaAnamnese ficha = ficha(LocalDateTime.now().plusDays(1), LocalDateTime.now());
-        ficha.setConsentimentoEm(LocalDateTime.now());
+        FichaAnamnese ficha = ficha(LocalDateTime.now(relogio).plusDays(1), LocalDateTime.now(relogio));
+        ficha.setConsentimentoEm(LocalDateTime.now(relogio));
         fichas.save(ficha);
 
         mvc.perform(get("/admin/sessoes/" + ficha.getSessao().getId() + "/anamnese")
