@@ -1,14 +1,18 @@
 <!DOCTYPE html>
 <html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
-<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>InkAgenda</title></head>
+<head th:replace="~{fragmentos/layout :: cabecalho('Ops')}"></head>
 <body>
-<main>
-  <h1 th:text="${status}">Erro</h1>
-  <p th:if="${mensagem != null}" th:text="${mensagem}">Mensagem</p>
-  <p th:if="${mensagem == null and status == 404}">Página não encontrada.</p>
-  <p th:if="${mensagem == null and status == 403}">Acesso não permitido.</p>
-  <p th:if="${mensagem == null and status != 404 and status != 403}">Não foi possível concluir a ação.</p>
-  <a th:href="@{/}">Voltar ao início</a>
+<header th:replace="~{fragmentos/layout :: topo}"></header>
+<main class="secao container">
+  <div class="cartao centro">
+    <h1 th:text="${status}">Erro</h1>
+    <p th:if="${mensagem != null}" th:text="${mensagem}">Mensagem</p>
+    <p th:if="${mensagem == null and status == 404}">Página não encontrada.</p>
+    <p th:if="${mensagem == null and status == 403}">Acesso não permitido.</p>
+    <p th:if="${mensagem == null and status != 404 and status != 403}">Não foi possível concluir a ação.</p>
+    <a class="btn" th:href="@{/}">Voltar ao início</a>
+  </div>
 </main>
+<footer th:replace="~{fragmentos/layout :: rodape}"></footer>
 </body>
 </html>

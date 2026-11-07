@@ -1,5 +1,15 @@
 <!DOCTYPE html>
 <html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
-<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Pedido enviado | InkAgenda</title></head>
-<body><main><h1>Pedido enviado</h1><p>Você receberá o orçamento pelo WhatsApp.</p><a th:href="@{/}">Voltar ao início</a></main></body>
+<head th:replace="~{fragmentos/layout :: cabecalho('Pedido enviado')}"></head>
+<body>
+<header th:replace="~{fragmentos/layout :: topo}"></header>
+<main class="secao container">
+  <div class="cartao centro">
+    <h1>Pedido enviado</h1>
+    <p>Você receberá o orçamento pelo WhatsApp.</p>
+    <a class="btn" th:href="@{/}">Voltar ao início</a>
+  </div>
+</main>
+<footer th:replace="~{fragmentos/layout :: rodape}"></footer>
+</body>
 </html>

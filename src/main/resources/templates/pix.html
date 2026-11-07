@@ -1,13 +1,18 @@
 <!DOCTYPE html>
 <html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
-<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Sinal | InkAgenda</title></head>
+<head th:replace="~{fragmentos/layout :: cabecalho('Sinal')}"></head>
 <body>
-<main>
-  <h1>Pague o sinal para garantir seu horário</h1>
-  <p>Horário: <span th:text="${#temporals.format(sessao.inicio, 'dd/MM/yyyy HH:mm')}">Data</span></p>
-  <p>Sinal: <span th:text="${solicitacao.valorSinal}">0</span></p>
-  <p>Chave Pix: <strong th:text="${chavePix}">chave</strong></p>
-  <p>Pague até <span th:text="${#temporals.format(sessao.expiraEm, 'dd/MM/yyyy HH:mm')}">prazo</span>. Depois disso o horário é liberado.</p>
+<header th:replace="~{fragmentos/layout :: topo}"></header>
+<main class="secao container">
+  <div class="cartao">
+    <h1>Pague o sinal para garantir seu horário</h1>
+    <p>Horário: <strong th:text="${#temporals.format(sessao.inicio, 'dd/MM/yyyy HH:mm')}">Data</strong></p>
+    <p>Sinal: <strong th:text="${solicitacao.valorSinal}">0</strong></p>
+    <p>Chave Pix:</p>
+    <div class="pix-chave" th:text="${chavePix}">chave</div>
+    <p class="ajuda">Pague até <span th:text="${#temporals.format(sessao.expiraEm, 'dd/MM/yyyy HH:mm')}">prazo</span>. Depois disso o horário é liberado.</p>
+  </div>
 </main>
+<footer th:replace="~{fragmentos/layout :: rodape}"></footer>
 </body>
 </html>
