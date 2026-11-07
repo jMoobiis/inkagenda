@@ -1,21 +1,21 @@
 <!DOCTYPE html>
 <html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
-<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Véspera | InkAgenda</title></head>
-<body>
+<head th:replace="~{fragmentos/layout :: cabecalho('Véspera')}"></head>
+<body class="admin">
 <nav th:replace="~{admin/_menu :: menu}"></nav>
-<main>
+<main class="container secao">
   <h1>Sessões de amanhã</h1>
-  <p th:if="${#lists.isEmpty(lembretes)}">Nenhuma sessão confirmada para amanhã.</p>
-  <article th:each="lembrete : ${lembretes}">
+  <p class="vazio" th:if="${#lists.isEmpty(lembretes)}">Nenhuma sessão confirmada para amanhã.</p>
+  <article class="cartao-item cartao-grande" th:each="lembrete : ${lembretes}">
     <h2 th:text="${lembrete.sessao.solicitacao.cliente.nome}">Cliente</h2>
     <p th:text="${#temporals.format(lembrete.sessao.inicio, 'dd/MM/yyyy HH:mm')}">Horário</p>
-    <a th:if="${lembrete.podeEnviar()}" th:href="${lembrete.linkWhatsApp}" target="_blank" rel="noopener">Enviar Lembrete WhatsApp</a>
+    <a class="btn" th:if="${lembrete.podeEnviar()}" th:href="${lembrete.linkWhatsApp}" target="_blank" rel="noopener">Enviar Lembrete WhatsApp</a>
     <th:block th:unless="${lembrete.podeEnviar()}">
-      <button type="button" disabled>Enviar Lembrete WhatsApp</button>
-      <p th:text="${lembrete.aviso}" role="alert">Aviso</p>
+      <button class="btn" type="button" disabled>Enviar Lembrete WhatsApp</button>
+      <p class="alerta" th:text="${lembrete.aviso}" role="alert">Aviso</p>
     </th:block>
-    <p th:if="${lembrete.sessao.presencaConfirmada}">Presença confirmada</p>
-    <form th:unless="${lembrete.sessao.presencaConfirmada}" th:action="@{/admin/sessoes/{id}/presenca(id=${lembrete.sessao.id})}" method="post"><button type="submit">Presença Confirmada</button></form>
+    <p class="etiqueta" th:if="${lembrete.sessao.presencaConfirmada}">Presença confirmada</p>
+    <form th:unless="${lembrete.sessao.presencaConfirmada}" th:action="@{/admin/sessoes/{id}/presenca(id=${lembrete.sessao.id})}" method="post"><button class="btn btn-claro-escuro" type="submit">Presença Confirmada</button></form>
   </article>
 </main>
 </body>

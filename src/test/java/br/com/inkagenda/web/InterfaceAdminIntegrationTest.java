@@ -69,7 +69,7 @@ class InterfaceAdminIntegrationTest {
     @Test
     void deveExibirCartoesDeLembreteComAcoesQuandoAbrirAVespera() throws Exception {
         mvc.perform(get("/admin/vespera").with(user("admin")))
-                .andExpect(content().string(containsString("class=\"cartao-item\"")))
+                .andExpect(content().string(containsString("class=\"cartao-item cartao-grande\"")))
                 .andExpect(content().string(containsString("Enviar Lembrete WhatsApp")))
                 .andExpect(content().string(containsString("Presença Confirmada")));
     }

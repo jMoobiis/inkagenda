@@ -1,35 +1,33 @@
 <!DOCTYPE html>
 <html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
-<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Agenda | InkAgenda</title></head>
-<body>
+<head th:replace="~{fragmentos/layout :: cabecalho('Agenda')}"></head>
+<body class="admin">
 <nav th:replace="~{admin/_menu :: menu}"></nav>
-<main>
+<main class="container secao">
   <h1>Agenda de <span th:text="${#temporals.format(agenda.dia, 'dd/MM/yyyy')}">dia</span></h1>
-  <form th:action="@{/admin/agenda}" method="get">
-    <label>Dia <input type="date" name="dia" th:value="${agenda.dia}"></label>
-    <button type="submit">Ver</button>
+  <form class="linha-form" th:action="@{/admin/agenda}" method="get">
+    <label class="campo">Dia <input type="date" name="dia" th:value="${agenda.dia}"></label>
+    <button class="btn" type="submit">Ver</button>
   </form>
   <h2>Sessões</h2>
-  <ul>
-    <li th:each="sessao : ${agenda.sessoes}">
-      <a th:href="@{/admin/sessoes/{id}(id=${sessao.id})}"><span th:text="${#temporals.format(sessao.inicio, 'HH:mm')}">Início</span> - <span th:text="${sessao.solicitacao.cliente.nome}">Cliente</span></a>
-      <span th:text="${sessao.status}">Status</span>
-    </li>
-  </ul>
+  <p class="vazio" th:if="${#lists.isEmpty(agenda.sessoes)}">Nenhuma sessão neste dia.</p>
+  <article class="cartao-item" th:each="sessao : ${agenda.sessoes}">
+    <a th:href="@{/admin/sessoes/{id}(id=${sessao.id})}"><span th:text="${#temporals.format(sessao.inicio, 'HH:mm')}">Início</span> - <span th:text="${sessao.solicitacao.cliente.nome}">Cliente</span></a>
+    <span class="etiqueta" th:text="${sessao.status}">Status</span>
+  </article>
   <h2>Bloqueios</h2>
-  <ul>
-    <li th:each="bloqueio : ${agenda.bloqueios}">
-      <span th:text="${#temporals.format(bloqueio.inicio, 'dd/MM HH:mm')}">Início</span> até <span th:text="${#temporals.format(bloqueio.fim, 'dd/MM HH:mm')}">Fim</span>
-      <span th:text="${bloqueio.descricao}">Descrição</span>
-      <form th:action="@{/admin/bloqueios/{id}/remover(id=${bloqueio.id})}" method="post"><button type="submit">Remover</button></form>
-    </li>
-  </ul>
-  <form th:action="@{/admin/bloqueios}" method="post">
+  <p class="vazio" th:if="${#lists.isEmpty(agenda.bloqueios)}">Nenhum bloqueio neste dia.</p>
+  <article class="cartao-item" th:each="bloqueio : ${agenda.bloqueios}">
+    <span><span th:text="${#temporals.format(bloqueio.inicio, 'dd/MM HH:mm')}">Início</span> até <span th:text="${#temporals.format(bloqueio.fim, 'dd/MM HH:mm')}">Fim</span></span>
+    <span class="ajuda" th:text="${bloqueio.descricao}">Descrição</span>
+    <form th:action="@{/admin/bloqueios/{id}/remover(id=${bloqueio.id})}" method="post"><button class="btn btn-mini" type="submit">Remover</button></form>
+  </article>
+  <form class="cartao" th:action="@{/admin/bloqueios}" method="post">
     <h2>Novo bloqueio</h2>
-    <label>Início <input type="datetime-local" name="inicio" required></label>
-    <label>Fim <input type="datetime-local" name="fim" required></label>
-    <label>Descrição <input name="descricao" maxlength="255"></label>
-    <button type="submit">Bloquear</button>
+    <label class="campo">Início <input type="datetime-local" name="inicio" required></label>
+    <label class="campo">Fim <input type="datetime-local" name="fim" required></label>
+    <label class="campo">Descrição <input name="descricao" maxlength="255"></label>
+    <button class="btn btn-bloco" type="submit">Bloquear</button>
   </form>
 </main>
 </body>

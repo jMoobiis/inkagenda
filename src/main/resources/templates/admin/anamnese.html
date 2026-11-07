@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
-<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Anamnese | InkAgenda</title></head>
-<body>
+<head th:replace="~{fragmentos/layout :: cabecalho('Anamnese')}"></head>
+<body class="admin">
 <nav th:replace="~{admin/_menu :: menu}"></nav>
-<main>
+<main class="container secao">
   <h1>Anamnese</h1>
   <p th:text="${sessao.solicitacao.cliente.nome}">Cliente</p>
   <p th:if="${ficha == null or ficha.preenchidaEm == null}">A ficha ainda não foi enviada.</p>

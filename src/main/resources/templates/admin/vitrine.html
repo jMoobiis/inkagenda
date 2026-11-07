@@ -1,42 +1,48 @@
 <!DOCTYPE html>
 <html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
-<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Vitrine | InkAgenda</title></head>
-<body>
+<head th:replace="~{fragmentos/layout :: cabecalho('Vitrine')}"></head>
+<body class="admin">
 <nav th:replace="~{admin/_menu :: menu}"></nav>
-<main>
+<main class="container secao">
   <h1>Gerenciar Portfólio &amp; Vitrine</h1>
-  <form th:action="@{/admin/vitrine/modo}" method="post">
-    <label>Modo de exibição
+  <form class="cartao" th:action="@{/admin/vitrine/modo}" method="post">
+    <label class="campo">Modo de exibição
       <select name="modo"><option th:each="m : ${modos}" th:value="${m}" th:text="${m}" th:selected="${m == modo}">Modo</option></select>
     </label>
-    <button type="submit">Aplicar</button>
+    <button class="btn btn-bloco" type="submit">Aplicar</button>
   </form>
-  <form th:action="@{/admin/vitrine/fotos}" method="post" enctype="multipart/form-data">
+  <form class="cartao" th:action="@{/admin/vitrine/fotos}" method="post" enctype="multipart/form-data">
     <h2>Nova foto</h2>
-    <label>Título <input name="titulo" required></label>
-    <label>Estilo <select name="estilo"><option th:each="e : ${estilos}" th:value="${e}" th:text="${e.rotulo}">Estilo</option></select></label>
-    <label>Tag de destaque <input name="tagDestaque"></label>
-    <label>Ordem <input type="number" name="displayOrder"></label>
-    <label>Imagem <input type="file" name="arquivo" accept="image/jpeg,image/png" required></label>
-    <button type="submit">Adicionar</button>
+    <label class="campo">Título <input name="titulo" required></label>
+    <label class="campo">Estilo <select name="estilo"><option th:each="e : ${estilos}" th:value="${e}" th:text="${e.rotulo}">Estilo</option></select></label>
+    <label class="campo">Tag de destaque <input name="tagDestaque"></label>
+    <label class="campo">Ordem <input type="number" name="displayOrder"></label>
+    <label class="campo">Imagem <input type="file" name="arquivo" accept="image/jpeg,image/png" required></label>
+    <button class="btn btn-bloco" type="submit">Adicionar</button>
   </form>
   <h2>Fotos</h2>
-  <article th:each="foto : ${fotos}">
-    <img th:src="@{/admin/vitrine/fotos/{id}/imagem(id=${foto.id})}" th:alt="${foto.titulo}" width="120">
-    <p><span th:text="${foto.id}">0</span>: <span th:text="${foto.titulo}">Título</span> <span th:text="${foto.ativo ? 'Ativa' : 'Oculta'}">Ativa</span> <span th:if="${foto.fixadoHero}">No Hero</span></p>
-    <form th:action="@{/admin/vitrine/fotos/{id}/ativa(id=${foto.id})}" method="post">
-      <input type="hidden" name="valor" th:value="${!foto.ativo}">
-      <button type="submit" th:text="${foto.ativo ? 'Ocultar' : 'Ativar'}">Ocultar</button>
-    </form>
-    <form th:action="@{/admin/vitrine/fotos/{id}/hero(id=${foto.id})}" method="post">
-      <input type="hidden" name="valor" th:value="${!foto.fixadoHero}">
-      <button type="submit" th:text="${foto.fixadoHero ? 'Retirar do Hero' : 'Fixar no Hero'}">Fixar</button>
-    </form>
-  </article>
-  <form th:action="@{/admin/vitrine/ordem}" method="post">
+  <div class="grade-admin">
+    <article class="cartao-item" th:each="foto : ${fotos}">
+      <img th:src="@{/admin/vitrine/fotos/{id}/imagem(id=${foto.id})}" th:alt="${foto.titulo}">
+      <p><span th:text="${foto.id}">0</span>: <strong th:text="${foto.titulo}">Título</strong></p>
+      <p>
+        <span class="etiqueta" th:text="${foto.ativo ? 'Ativa' : 'Oculta'}">Ativa</span>
+        <span class="etiqueta" th:if="${foto.fixadoHero}">No Hero</span>
+      </p>
+      <form th:action="@{/admin/vitrine/fotos/{id}/ativa(id=${foto.id})}" method="post">
+        <input type="hidden" name="valor" th:value="${!foto.ativo}">
+        <button class="btn btn-mini" type="submit" th:text="${foto.ativo ? 'Ocultar' : 'Ativar'}">Ocultar</button>
+      </form>
+      <form th:action="@{/admin/vitrine/fotos/{id}/hero(id=${foto.id})}" method="post">
+        <input type="hidden" name="valor" th:value="${!foto.fixadoHero}">
+        <button class="btn btn-mini" type="submit" th:text="${foto.fixadoHero ? 'Retirar do Hero' : 'Fixar no Hero'}">Fixar</button>
+      </form>
+    </article>
+  </div>
+  <form class="cartao" th:action="@{/admin/vitrine/ordem}" method="post">
     <h2>Reordenar</h2>
-    <label>Códigos das fotos na nova ordem, separados por vírgula <input name="ids" required></label>
-    <button type="submit">Salvar ordem</button>
+    <label class="campo">Códigos das fotos na nova ordem, separados por vírgula <input name="ids" required></label>
+    <button class="btn btn-bloco" type="submit">Salvar ordem</button>
   </form>
 </main>
 </body>
