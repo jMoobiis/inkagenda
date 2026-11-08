@@ -21,6 +21,9 @@ node_modules/
 *.mv.db
 *.trace.db
 
+# Foto do tatuador: somente local
+src/main/resources/static/img/gusta.jpeg
+
 # Segredos
 .env
 .env.*

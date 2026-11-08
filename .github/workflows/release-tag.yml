@@ -1,0 +1,32 @@
+name: Tag de release
+
+# Cria a tag quando o merge de release chega na main.
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  tag:
+    if: startsWith(github.event.head_commit.message, 'release:')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+          cache: maven
+
+      - name: Confirma que a release passa nos testes
+        run: ./mvnw -B clean verify
+
+      - name: Cria a tag
+        run: |
+          git config user.name "João Victor Mobiglia Podenciano"
+          git config user.email "201103762+jMoobiis@users.noreply.github.com"
+          git tag -a v1.0.0-mvp -m "Release v1.0.0-mvp - InkAgenda MVP Validado"
+          git push origin v1.0.0-mvp

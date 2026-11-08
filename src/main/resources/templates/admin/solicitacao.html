@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragmentos/layout :: cabecalho('Solicitação')}"></head>
+<body class="admin">
+<nav th:replace="~{admin/_menu :: menu}"></nav>
+<main class="container secao">
+  <h1 th:text="${solicitacao.cliente.nome}">Cliente</h1>
+  <p>Status: <span th:text="${solicitacao.status}">Status</span></p>
+  <p>WhatsApp: <span th:text="${solicitacao.cliente.whatsapp}">0</span></p>
+  <p><span th:text="${solicitacao.tamanhoCm}">0</span> cm, <span th:text="${solicitacao.regiaoCorpo}">região</span>, <span th:text="${solicitacao.estilo?.rotulo}">estilo</span></p>
+  <p th:if="${solicitacao.cobertura}">É cobertura</p>
+  <p th:text="${solicitacao.descricao}">Descrição</p>
+  <p>Preferência: <span th:text="${solicitacao.preferenciaDias}">dias</span></p>
+  <a th:each="imagem : ${solicitacao.imagens}" th:href="@{/admin/solicitacoes/{s}/imagens/{i}(s=${solicitacao.id},i=${imagem.id})}">
+    <img th:src="@{/admin/solicitacoes/{s}/imagens/{i}(s=${solicitacao.id},i=${imagem.id})}" th:alt="${imagem.tipo}" width="160">
+  </a>
+  <form class="cartao" th:if="${solicitacao.status.name() == 'NOVA' or solicitacao.status.name() == 'ORCADA'}" th:action="@{/admin/solicitacoes/{id}/orcamento(id=${solicitacao.id})}" method="post">
+    <h2>Responder orçamento</h2>
+    <label class="campo">Valor total <input type="number" step="0.01" min="0.01" name="valorTotal" th:value="${solicitacao.valorTotal}" required></label>
+    <label class="campo">Duração em horas <input type="number" min="1" name="duracaoEstimadaHoras" th:value="${solicitacao.duracaoEstimadaHoras}" required></label>
+    <label class="campo">Sinal <input type="number" step="0.01" min="0.01" name="valorSinal" th:value="${solicitacao.valorSinal}" required></label>
+    <button class="btn btn-bloco" type="submit">Salvar orçamento</button>
+  </form>
+  <p th:if="${linkWhatsApp}"><a th:href="${linkWhatsApp}" target="_blank" rel="noopener">Enviar Orçamento no WhatsApp</a></p>
+  <p th:if="${sessao}"><a th:href="@{/admin/sessoes/{id}(id=${sessao.id})}">Ver sessão</a></p>
+</main>
+</body>
+</html>
