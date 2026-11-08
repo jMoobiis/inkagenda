@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<body>
+<nav class="menu-admin" th:fragment="menu" aria-label="Painel administrativo">
+  <div class="container">
+    <a class="logo" th:href="@{/admin}">INKAGENDA <span>//</span> ADMIN</a>
+    <div class="menu-links">
+      <a th:href="@{/admin}">Painel</a>
+      <a th:href="@{/admin/agenda}">Agenda</a>
+      <a th:href="@{/admin/vespera}">Véspera</a>
+      <a th:href="@{/admin/vitrine}">Gerenciar Portfólio &amp; Vitrine</a>
+      <form th:action="@{/logout}" method="post"><button class="btn btn-mini" type="submit">Sair</button></form>
+    </div>
+  </div>
+  <div class="container">
+    <p class="aviso-ok" th:if="${mensagem}" th:text="${mensagem}" role="status">Mensagem</p>
+    <p class="alerta" th:if="${erro}" th:text="${erro}" role="alert">Erro</p>
+  </div>
+</nav>
+</body>
+</html>

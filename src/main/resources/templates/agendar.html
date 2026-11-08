@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragmentos/layout :: cabecalho('Agendar')}"></head>
+<body>
+<header th:replace="~{fragmentos/layout :: topo}"></header>
+<main class="secao container">
+  <div class="cartao">
+    <h1>Escolha seu horário</h1>
+    <p class="alerta" th:if="${erro}" th:text="${erro}" role="alert">Erro</p>
+    <div class="resumo">
+      <div>Valor total<strong th:text="${solicitacao.valorTotal}">0</strong></div>
+      <div>Sinal<strong th:text="${solicitacao.valorSinal}">0</strong></div>
+      <div>Duração<strong><span th:text="${solicitacao.duracaoEstimadaHoras}">0</span>h</strong></div>
+    </div>
+    <form th:action="@{/agendar/{t}(t=${token})}" method="get">
+      <label class="campo">Dia <input type="date" name="dia" th:value="${dia}" th:min="${diaMinimo}"></label>
+      <button class="btn btn-bloco" type="submit">Ver horários</button>
+    </form>
+    <p class="vazio" th:if="${#lists.isEmpty(horarios)}">Sem horários livres neste dia.</p>
+    <div class="horarios">
+      <form th:each="horario : ${horarios}" th:action="@{/agendar/{t}(t=${token})}" method="post">
+        <input type="hidden" name="inicio" th:value="${horario}">
+        <button class="btn btn-bloco" type="submit" th:text="${#temporals.format(horario, 'dd/MM HH:mm')}">Horário</button>
+      </form>
+    </div>
+  </div>
+</main>
+<footer th:replace="~{fragmentos/layout :: rodape}"></footer>
+</body>
+</html>

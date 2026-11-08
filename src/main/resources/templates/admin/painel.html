@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragmentos/layout :: cabecalho('Painel')}"></head>
+<body class="admin">
+<nav th:replace="~{admin/_menu :: menu}"></nav>
+<main class="container secao">
+  <h1>Painel</h1>
+  <div class="kanban">
+    <section class="coluna" th:each="coluna : ${porStatus}">
+      <h2><span th:text="${coluna.key.rotulo}">Status</span> <small class="contador" th:text="${#lists.size(coluna.value)}">0</small></h2>
+      <p class="vazio" th:if="${#lists.isEmpty(coluna.value)}">Nada por aqui.</p>
+      <article class="cartao-item" th:each="item : ${coluna.value}">
+        <a th:href="@{/admin/solicitacoes/{id}(id=${item.solicitacao.id})}" th:text="${item.solicitacao.cliente.nome}">Cliente</a>
+        <span class="ajuda" th:text="${item.solicitacao.estilo?.rotulo}">Estilo</span>
+        <strong th:if="${item.semRetorno}" class="badge-sem-retorno">Sem retorno</strong>
+      </article>
+    </section>
+  </div>
+</main>
+</body>
+</html>

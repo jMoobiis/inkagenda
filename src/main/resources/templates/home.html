@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragmentos/layout :: cabecalho('Tatuagem autoral')}"></head>
+<body th:attr="data-modo=${modo}">
+<header th:replace="~{fragmentos/layout :: topo}"></header>
+<main>
+  <section class="container hero" aria-label="Destaques">
+    <div class="hero-fotos">
+      <div class="hero-foto" th:each="foto : ${hero}">
+        <img th:src="@{/portfolio/{id}/imagem(id=${foto.id})}" th:alt="${foto.titulo}">
+      </div>
+      <div class="painel-vazio" th:if="${#lists.isEmpty(hero)}" aria-hidden="true">INK</div>
+    </div>
+    <div class="hero-texto">
+      <h1>TRANSFORME SUA IDEIA EM <em>ARTE NA PELE</em></h1>
+      <p>Orçamento pelo celular, horário garantido com sinal e ficha de saúde digital.</p>
+      <a class="btn btn-bloco" th:href="@{/orcamento}">Pedir orçamento</a>
+    </div>
+  </section>
+
+  <section id="portfolio" class="secao container">
+    <h2>Portfólio</h2>
+    <nav class="filtros" aria-label="Filtrar por estilo">
+      <a class="chip" th:classappend="${estiloSelecionado == null} ? 'ativo'" th:href="@{/#portfolio}">Todos</a>
+      <a class="chip" th:each="estilo : ${estilos}" th:classappend="${estilo == estiloSelecionado} ? 'ativo'"
+         th:href="@{/(estilo=${estilo})}" th:text="${estilo.rotulo}">Estilo</a>
+    </nav>
+    <div class="galeria">
+      <figure class="foto" th:each="foto : ${fotos}">
+        <img th:src="@{/portfolio/{id}/imagem(id=${foto.id})}" th:alt="${foto.titulo}" loading="lazy">
+        <figcaption><span th:text="${foto.titulo}">Título</span> <em th:if="${foto.tagDestaque != null}" th:text="${foto.tagDestaque}">Tag</em></figcaption>
+      </figure>
+    </div>
+    <p class="vazio" th:if="${#lists.isEmpty(fotos)}">Nenhuma foto neste estilo por enquanto.</p>
+  </section>
+
+  <section id="sobre" class="secao escuro">
+    <div class="container sobre">
+      <div class="retrato">
+        <div class="retrato-moldura">
+          <span class="retrato-fallback" aria-hidden="true">G</span>
+          <img src="/img/gusta.jpeg" alt="Gusta, tatuador" th:src="@{/img/gusta.jpeg}" onerror="this.remove()">
+        </div>
+        <span class="badge">⚡ Orçamento sem retrabalho</span>
+        <span class="badge">📅 Horário garantido com sinal</span>
+        <span class="badge">🔒 Anamnese 100% Digital</span>
+      </div>
+      <div>
+        <h2>Quem está na agulha</h2>
+        <p>Tatuador autônomo, estilo urbano e direto. Cada projeto nasce da sua referência e sai com valor, duração e data combinados antes de começar.</p>
+        <a class="btn" th:href="@{/orcamento}">Quero tatuar</a>
+      </div>
+    </div>
+  </section>
+
+  <section id="como-funciona" class="secao container">
+    <h2>Como Funciona</h2>
+    <ol class="passos">
+      <li><strong>Peça o orçamento</strong> Conte a ideia e envie as referências, sem login.</li>
+      <li><strong>Receba o valor</strong> Você recebe valor, duração e sinal pelo WhatsApp.</li>
+      <li><strong>Escolha o horário</strong> Reserve a data e pague o sinal por Pix no prazo.</li>
+      <li><strong>Preencha a ficha</strong> Anamnese digital e confidencial, só o tatuador acessa.</li>
+    </ol>
+  </section>
+</main>
+<footer th:replace="~{fragmentos/layout :: rodape}"></footer>
+</body>
+</html>

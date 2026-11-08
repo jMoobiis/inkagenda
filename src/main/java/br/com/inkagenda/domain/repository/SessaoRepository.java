@@ -5,6 +5,7 @@ import br.com.inkagenda.domain.model.Sessao;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface SessaoRepository extends JpaRepository<Sessao, Long> {
@@ -16,4 +17,7 @@ public interface SessaoRepository extends JpaRepository<Sessao, Long> {
 
     List<Sessao> findByStatusAndInicioBetweenOrderByInicio(StatusSessao status, LocalDateTime de,
             LocalDateTime ate);
+
+    Optional<Sessao> findFirstBySolicitacaoIdAndStatusInOrderByIdDesc(Long solicitacaoId,
+            Collection<StatusSessao> status);
 }

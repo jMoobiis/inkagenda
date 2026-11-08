@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragmentos/layout :: cabecalho('Anamnese')}"></head>
+<body class="admin">
+<nav th:replace="~{admin/_menu :: menu}"></nav>
+<main class="container secao">
+  <h1>Anamnese</h1>
+  <p th:text="${sessao.solicitacao.cliente.nome}">Cliente</p>
+  <p th:if="${ficha == null or ficha.preenchidaEm == null}">A ficha ainda não foi enviada.</p>
+  <dl th:if="${ficha != null and ficha.preenchidaEm != null}">
+    <dt>Alergias</dt><dd th:text="${ficha.alergias}">-</dd>
+    <dt>Medicamentos</dt><dd th:text="${ficha.medicamentos}">-</dd>
+    <dt>Cicatrização</dt><dd th:text="${ficha.problemasCicatrizacao}">-</dd>
+    <dt>Diabetes</dt><dd th:text="${ficha.diabetes ? 'Sim' : 'Não'}">-</dd>
+    <dt>Gestação</dt><dd th:text="${ficha.gestacao ? 'Sim' : 'Não'}">-</dd>
+    <dt>Observações</dt><dd th:text="${ficha.observacoes}">-</dd>
+    <dt>Consentimento em</dt><dd th:text="${#temporals.format(ficha.consentimentoEm, 'dd/MM/yyyy HH:mm')}">-</dd>
+  </dl>
+</main>
+</body>
+</html>
